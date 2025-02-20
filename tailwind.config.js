@@ -17,11 +17,9 @@ module.exports = {
           from: "#3CC19A", // Gradient start
           to: "#05996E", // Gradient end
         },
-        text: {
-          red: "#CD290F",
-          green: "#05996E",
-          gray: "#5E5D5D",
-        },
+        green: "#05996E",
+        danger: "#CD290F",
+        gray: "#5E5D5D",
       },
       fontFamily: {
         rubik: ["Rubik-Regular", "sans-serif"],
