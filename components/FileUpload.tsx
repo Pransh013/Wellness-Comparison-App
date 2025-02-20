@@ -1,11 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import Icon from "@/components/Icon";
-
-interface FileUploadProps {
-  file: any;
-  onUpload: (file: any) => void;
-}
+import { FileUploadProps } from "@/types";
 
 const FileUpload = ({ file, onUpload }: FileUploadProps) => {
   const handleFileUpload = async () => {

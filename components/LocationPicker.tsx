@@ -1,10 +1,6 @@
 import { Text, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-
-interface LocationPickerProps {
-  location: { city: string; state: string; country: string };
-  onLocationChange: (key: string, value: string) => void;
-}
+import { LocationPickerProps } from "@/types";
 
 const LocationPicker = ({
   location,

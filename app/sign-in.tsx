@@ -2,8 +2,6 @@ import { View, Text, ScrollView } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "@/components/Button";
-import { Picker } from "@react-native-picker/picker";
-import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
 import { formSchema } from "@/schemas";
 import { FormStateType } from "@/types";

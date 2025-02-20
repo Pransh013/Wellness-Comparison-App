@@ -1,9 +1,5 @@
+import { AgreementCheckboxProps } from "@/types";
 import { View, Text, TouchableOpacity } from "react-native";
-
-interface AgreementCheckboxProps {
-  agreed: boolean;
-  onToggle: () => void;
-}
 
 const AgreementCheckbox = ({ agreed, onToggle }: AgreementCheckboxProps) => {
   return (
