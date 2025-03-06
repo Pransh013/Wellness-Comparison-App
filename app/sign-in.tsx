@@ -11,23 +11,38 @@ import FileUpload from "@/components/FileUpload";
 import AgreementCheckbox from "@/components/AgreementCheckbox";
 import { handleInputChange } from "@/lib/utils";
 import LocationPicker from "@/components/LocationPicker";
+import { useAuth } from "@/contexts/AuthContext";
+import { ZodIssue } from "zod";
 
 const SignIn = () => {
   const [formState, setFormState] = useState<FormStateType>(initialFormState);
-  const [formErrors, setFormErrors] = useState<any>([]);
+  const [formErrors, setFormErrors] = useState<ZodIssue[]>([]);
 
-  const handleLogin = () => {
+  const { login } = useAuth();
+
+  const handleLogin = async () => {
     const result = formSchema.safeParse(formState);
     if (!result.success) {
       setFormErrors(result.error.errors);
       return;
     }
+
+    const userData = {
+      name: formState.name,
+      mobile: formState.mobile,
+      location: formState.location,
+      agreed: formState.agreed,
+      file: formState.file,
+      isAuthenticated: true,
+    };
+
+    await login(userData);
     router.replace("/");
   };
 
   return (
     <SafeAreaView className="bg-primary-background h-full py-10 px-4">
-      <ScrollView contentContainerClassName="h-full">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="h-full gap-10">
           <Text className="text-center text-xl uppercase font-rubik">
             Thrive Daily
@@ -87,11 +102,11 @@ const SignIn = () => {
 
               <Button onPress={handleLogin} title="Submit"></Button>
 
-              {formErrors[0]?.message && (
+              {formErrors[0]?.message ? (
                 <Text className="text-red-500 text-center font-rubik mt-1 text-lg">
                   **{formErrors[0]?.message}
                 </Text>
-              )}
+              ) : null}
             </View>
           </View>
         </View>

@@ -50,3 +50,11 @@ export type LocationPickerProps = {
   location: { city: string; state: string; country: string };
   onLocationChange: (key: string, value: string) => void;
 };
+
+export type AuthContextType = {
+  user: FormStateType | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (userData: FormStateType) => Promise<void>;
+  logout: () => Promise<void>;
+};

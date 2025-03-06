@@ -16,13 +16,13 @@ const FileUpload = ({ file, onUpload }: FileUploadProps) => {
   };
 
   return (
-    <View className="">
+    <View>
       <Text className="text-primary mt-4 text-sm font-rubik">
         Upload Your Report
       </Text>
       <View className="w-full flex-row items-center gap-4">
         <View className="bg-[#ebe5e5] flex-row w-full flex-1 rounded-md justify-center gap-3 items-center h-12">
-          {!file && <Icon name="Paperclip" size={24} color="#0F2736AB" />}
+          {!file ? <Icon name="Paperclip" size={24} color="#0F2736AB" /> : null}
           <Text className="text-[#0F2736AB] font-rubik text-nowrap max-w-3/4">
             {file ? file.name : "No file attached"}
           </Text>

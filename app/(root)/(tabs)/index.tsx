@@ -6,7 +6,7 @@ import { advisoryList } from "@/constants/data";
 
 const Home = () => {
   return (
-    <SafeAreaView className="bg-primary-background justify-center h-full py-10">
+    <SafeAreaView className="bg-primary-background justify-center h-screen py-10">
       <ScrollView contentContainerClassName="h-full items-center">
         <Header />
 

@@ -10,7 +10,7 @@ const AgreementCheckbox = ({ agreed, onToggle }: AgreementCheckboxProps) => {
             agreed ? "bg-button-bg border-gray" : "bg-white border-gray"
           }`}
         >
-          {agreed && <Text className="text-white">✓</Text>}
+          {agreed ? <Text className="text-white">✓</Text> : null}
         </View>
       </TouchableOpacity>
       <Text className="text-gray ml-2 font-rubik">
