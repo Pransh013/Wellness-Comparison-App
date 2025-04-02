@@ -5,7 +5,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
-
   if (isLoading) {
     return (
       <SafeAreaView className="bg-white h-full flex justify-center items-center">

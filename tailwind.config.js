@@ -11,11 +11,11 @@ module.exports = {
           background: "#F0F2ED", // Primary background
         },
         button: {
-          bg: "#3CC19A", // Button background
+          bg: "#05996E", // Button background
         },
         card: {
           from: "#3CC19A", // Gradient start
-          to: "#05996E", // Gradient end
+          to: "#3CC19A", // Gradient end
         },
         green: "#05996E",
         danger: "#CD290F",

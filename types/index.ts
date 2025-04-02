@@ -4,14 +4,14 @@ import { icons } from "lucide-react-native";
 type LocationType = {
   city: string;
   state: string;
-  country: string;
 };
 
 export type FormStateType = {
   name: string;
   mobile: string;
+  email: string;
   location: LocationType;
-  file: null | DocumentPickerAsset;
+  file: DocumentPickerAsset | null;
   agreed: boolean;
 };
 
@@ -47,7 +47,7 @@ export type FileUploadProps = {
 };
 
 export type LocationPickerProps = {
-  location: { city: string; state: string; country: string };
+  location: { city: string; state: string };
   onLocationChange: (key: string, value: string) => void;
 };
 
@@ -57,4 +57,17 @@ export type AuthContextType = {
   isLoading: boolean;
   login: (userData: FormStateType) => Promise<void>;
   logout: () => Promise<void>;
+};
+
+export type ReportType = {
+  patient: {
+    name: string;
+    date: string;
+    sampleTest: string;
+    time: string;
+    result: string | null;
+    unit: string | null;
+    bioRef: string | null;
+  };
+  advisory: string[];
 };

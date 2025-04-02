@@ -30,32 +30,40 @@ const SignIn = () => {
     const userData = {
       name: formState.name,
       mobile: formState.mobile,
+      email: formState.email,
       location: formState.location,
       agreed: formState.agreed,
       file: formState.file,
       isAuthenticated: true,
     };
-
     await login(userData);
     router.replace("/");
   };
 
   return (
-    <SafeAreaView className="bg-primary-background h-full py-10 px-4">
+    <SafeAreaView className="bg-primary-background h-full py-8 px-4">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <View className="h-full gap-10">
+        <View className="h-full gap-4">
           <Text className="text-center text-xl uppercase font-rubik">
             Thrive Daily
           </Text>
 
-          <View className="bg-white rounded-lg py-10 px-4">
+          <ScrollView
+            contentContainerStyle={{
+              backgroundColor: "#fff",
+              borderRadius: 10,
+              paddingHorizontal: 20,
+              paddingVertical: 16,
+              justifyContent: "flex-start",
+            }}
+          >
             <Text className="text-center text-3xl font-rubik-semibold">
               Wellness
             </Text>
             <Text className="text-center text-3xl font-rubik-semibold">
               Comparison Test
             </Text>
-            <View className="mt-4 gap-2">
+            <View className="mt-3 gap-1.5">
               <FormInput
                 label="Name"
                 placeholder="Enter you name"
@@ -72,6 +80,15 @@ const SignIn = () => {
                 keyboardType="phone-pad"
                 onChange={(text) =>
                   handleInputChange("mobile", text, setFormState)
+                }
+              />
+
+              <FormInput
+                label="E-mail"
+                placeholder="Enter you email"
+                value={formState.email}
+                onChange={(text) =>
+                  handleInputChange("email", text, setFormState)
                 }
               />
 
@@ -108,7 +125,7 @@ const SignIn = () => {
                 </Text>
               ) : null}
             </View>
-          </View>
+          </ScrollView>
         </View>
       </ScrollView>
     </SafeAreaView>

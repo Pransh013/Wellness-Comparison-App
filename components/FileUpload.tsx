@@ -6,7 +6,7 @@ import { FileUploadProps } from "@/types";
 const FileUpload = ({ file, onUpload }: FileUploadProps) => {
   const handleFileUpload = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: "*/*" });
+      const result = await DocumentPicker.getDocumentAsync({ type: "application/pdf" });
       if (!result.canceled) {
         onUpload(result.assets[0]);
       }
