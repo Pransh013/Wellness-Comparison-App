@@ -63,11 +63,15 @@ export type ReportType = {
   patient: {
     name: string;
     date: string;
-    sampleTest: string;
+    testName: string;
     time: string;
-    result: string | null;
-    unit: string | null;
-    bioRef: string | null;
+    hospitalName?: string;
   };
-  advisory: string[];
+  tests: {
+    sampleTest: string;
+    result: string;
+    unit: string;
+    bioRef: string;
+    advisory: string[];
+  }[];
 };

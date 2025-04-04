@@ -4,7 +4,10 @@ import {
   ScrollView,
   ActivityIndicator,
   Linking,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
+import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
@@ -15,18 +18,13 @@ import { ReportType } from "@/types";
 
 const SERVER_URL = "http://52.66.206.177:3000";
 
-const hospitalToProviderMap: { [key: string]: string } = {
-  "Sakra World Hospital": "Omron Global",
-  "Green Valley Clinic": "MedEquip Co.",
-  "Sunrise Medical Center": "MedicaTech",
-  "Lakeside Hospital": "HealthPlus Technologies",
-};
-
 const Home = () => {
   const { user, logout } = useAuth();
   const uri = user?.file?.uri;
   const [report, setReport] = useState<ReportType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { width } = Dimensions.get("window");
 
   const sendToBackend = async (uri: string | undefined) => {
     if (!uri) return;
@@ -44,15 +42,9 @@ const Home = () => {
         },
       });
 
-      const cleanedString = response?.data?.analysis
-        .replace(/```json/g, "")
-        .replace(/```/g, "");
-
-      const reportData = JSON.parse(cleanedString);
-      setReport(reportData);
+      setReport(response?.data?.analysis);
     } catch (error) {
       console.error("Error sending PDF:", error);
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -64,25 +56,36 @@ const Home = () => {
 
   const sendEmail = (report: ReportType) => {
     const subject = `Medical Report for ${report?.patient?.name}`;
+
+    const testDetails = report.tests
+      .map(
+        (test, idx) =>
+          `Test ${idx + 1}:
+  - Sample Test: ${test.sampleTest}
+  - Result: ${test.result} ${test.unit}
+  - Bio Ref: ${test.bioRef}
+  - Advisory:\n    ${test.advisory.map((tip) => `• ${tip}`).join("\n    ")}\n`
+      )
+      .join("\n");
+
     const body = `
-    Dear Doctor,
+Dear Doctor,
 
-    Please find attached the medical report for ${report?.patient?.name}.
+Please find attached the medical report for ${report?.patient?.name}.
 
-    Patient Details:
-    Name: ${report?.patient?.name}
-    Date: ${report?.patient?.date}
-    Sample Test: ${report?.patient?.sampleTest}
-    Time: ${report?.patient?.time}
+Patient Details:
+- Name: ${report.patient.name}
+- Date: ${report.patient.date}
+- Time: ${report.patient.time}
+- Hospital: ${report.patient.hospitalName || "N/A"}
 
-    Advisory:
-    ${report?.advisory?.join("\n")}
+Test Details:
+${testDetails}
 
-    Best regards,
-    Your Medical App`;
+Regards,
+Your Medical App`;
 
-    const email = "recipient@example.com"; // Replace with the recipient's email
-
+    const email = "recipient@example.com";
     const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(body)}`;
@@ -107,18 +110,23 @@ const Home = () => {
       </View>
     );
 
-  const { patient, advisory } = report;
+  const { patient, tests } = report;
 
   return (
-    <SafeAreaView className="bg-primary-background justify-center h-screen py-10">
-      <ScrollView contentContainerClassName="h-full items-center">
+    <SafeAreaView className="bg-primary-background justify-center py-10">
+      <View
+        style={{
+          flexGrow: 1,
+          alignItems: "center",
+        }}
+      >
         <Header />
 
         <View className="w-full flex-row px-6 mt-4 gap-2 justify-between">
           <View className="gap-4 justify-center items-center">
             <View>
               <Text className="text-gray text-center">Name</Text>
-              <Text className="text-base font-semibold text-green">
+              <Text className="text-base font-semibold capitalize text-green">
                 {patient?.name || "N/A"}
               </Text>
             </View>
@@ -129,14 +137,14 @@ const Home = () => {
               </Text>
             </View>
           </View>
+
           <View className="items-center justify-center gap-4">
             <View>
               <Text className="text-gray text-center">Sample Test</Text>
-              <Text className="text-base font-semibold text-green">
-                {patient?.sampleTest || "N/A"}
+              <Text className="text-base font-semibold capitalize text-green">
+                {patient?.testName || "N/A"}
               </Text>
             </View>
-
             <View>
               <Text className="text-gray text-center">Time</Text>
               <Text className="text-base font-semibold text-gray-800">
@@ -146,56 +154,116 @@ const Home = () => {
           </View>
         </View>
 
-        <View className="bg-white w-full px-6 mt-4 py-8">
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-gray">Sample Test</Text>
-            <Text className="text-gray">Results</Text>
-            <Text className="text-gray">Units</Text>
-            <Text className="text-gray">Bio Ref</Text>
-          </View>
-
-          <View className="flex-row justify-between items-center">
-            <Text className="font-semibold max-w-32">
-              {patient?.sampleTest || "N/A"}
-            </Text>
-            <Text className="text-danger font-semibold">
-              {patient?.result || "N/A"}
-            </Text>
-            <Text className="font-semibold">{patient?.unit || "N/A"}</Text>
-            <Text className="font-semibold">{patient?.bioRef || "N/A"}</Text>
-          </View>
-        </View>
-
-        <View className="bg-green mx-6 p-3 rounded-lg mt-4 max-h-[320px]">
-          <Text className="text-white text-lg font-semibold mb-2">
-            Advisory:
-          </Text>
-          <ScrollView
-            contentContainerStyle={{
-              maxWidth: "95%",
-            }}
-          >
-            {advisory && advisory.length > 0 ? (
-              advisory.map((item, idx) => (
-                <View className="flex-row gap-1" key={idx}>
-                  <Text className="text-white text-2xl">•</Text>
-                  <Text className="text-white text-lg">{item}</Text>
+        <Carousel
+          loop={false}
+          width={width * 0.92}
+          height={450}
+          autoPlay={false}
+          data={tests}
+          scrollAnimationDuration={600}
+          style={{ alignSelf: "center", marginTop: 20 }}
+          renderItem={({ item }) => (
+            <View className="bg-white rounded-xl px-5 py-5 w-full">
+              {/* Test Details */}
+              <View className="mb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-gray font-semibold">Parameter</Text>
+                  <Text className="text-gray font-semibold">Result</Text>
+                  <Text className="text-gray font-semibold">Units</Text>
+                  <Text className="text-gray font-semibold">Bio Ref</Text>
                 </View>
-              ))
-            ) : (
-              <Text className="text-white">No advisory available</Text>
-            )}
-          </ScrollView>
-        </View>
+
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="font-semibold capitalize max-w-40">
+                    {item?.sampleTest || "N/A"}
+                  </Text>
+                  <Text className="text-danger font-semibold">
+                    {item?.result || "N/A"}
+                  </Text>
+                  <Text className="font-semibold">{item?.unit || "N/A"}</Text>
+                  <Text className="font-semibold">{item?.bioRef || "N/A"}</Text>
+                </View>
+              </View>
+
+              {/* Advisory */}
+              <View
+                className="bg-green rounded-lg p-2"
+                style={styles.advisoryContainer}
+              >
+                <Text className="text-white font-semibold text-base mb-2">
+                  Advisory:
+                </Text>
+                <ScrollView
+                  style={styles.advisoryScrollView}
+                  contentContainerStyle={styles.advisoryContent}
+                  showsVerticalScrollIndicator={true}
+                  nestedScrollEnabled={true}
+                  persistentScrollbar={true}
+                >
+                  {item?.advisory?.length > 0 ? (
+                    item.advisory.map((tip, idx) => (
+                      <View
+                        className="flex-row mb-1"
+                        key={idx}
+                        style={styles.advisoryItem}
+                      >
+                        <Text
+                          className="text-white text-xl"
+                          style={styles.bulletPoint}
+                        >
+                          •
+                        </Text>
+                        <Text
+                          className="text-white text-base"
+                          style={styles.advisoryText}
+                        >
+                          {tip}
+                        </Text>
+                      </View>
+                    ))
+                  ) : (
+                    <Text className="text-white">No advisory available</Text>
+                  )}
+                </ScrollView>
+              </View>
+            </View>
+          )}
+        />
 
         <Button
           title="Send Report to Email"
           onPress={() => sendEmail(report)}
           className="w-60"
         />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  advisoryContainer: {
+    height: 300,
+  },
+  advisoryScrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  advisoryContent: {
+    paddingHorizontal: 8,
+    paddingBottom: 10,
+  },
+  advisoryItem: {
+    flexDirection: "row",
+    marginBottom: 4,
+    width: "100%",
+  },
+  bulletPoint: {
+    marginRight: 4,
+  },
+  advisoryText: {
+    flex: 1,
+    flexWrap: "wrap",
+  },
+});
 
 export default Home;
